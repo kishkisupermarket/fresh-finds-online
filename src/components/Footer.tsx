@@ -16,7 +16,7 @@ const Footer = () => (
             </div>
             <span className="font-display text-lg font-bold">Kishki Halal Supermarket</span>
           </div>
-          <p className="text-sm opacity-70">Your neighbourhood Canadian grocery store with the freshest produce and meats.</p>
+          <p className="text-sm opacity-70">Your neighbourhood Canadian halal grocery store with the freshest produce and meats.</p>
           <div className="flex items-center gap-2 text-sm">
             <Phone className="w-4 h-4 text-primary" />
             <a href="tel:5192082025" className="hover:text-primary transition-colors">519-208-2025</a>
