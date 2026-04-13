@@ -17,7 +17,7 @@ const categoryEmoji: Record<string, string> = {
 
 const ProductCard = ({ product }: { product: Product }) => {
   const { addToCart } = useCart();
-  const displayPrice = product.is_on_sale && product.sale_price ? product.sale_price : product.price;
+  const displayPrice = product.is_on_sale && product.sale_price ? Number(product.sale_price) : Number(product.price);
 
   return (
     <motion.div
@@ -27,7 +27,11 @@ const ProductCard = ({ product }: { product: Product }) => {
     >
       {/* Image area */}
       <div className="relative aspect-square bg-muted flex items-center justify-center overflow-hidden">
-        <span className="text-6xl">{categoryEmoji[product.category] || '🛍️'}</span>
+        {product.image_url ? (
+          <img src={product.image_url} alt={product.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+        ) : (
+          <span className="text-6xl">{categoryEmoji[product.category] || '🛍️'}</span>
+        )}
         {product.is_on_sale && (
           <div className="absolute top-2 left-2 bg-secondary text-secondary-foreground text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1">
             <Tag className="w-3 h-3" /> SALE
@@ -46,7 +50,7 @@ const ProductCard = ({ product }: { product: Product }) => {
           <div className="flex items-baseline gap-2">
             <span className="text-lg font-bold text-primary">${displayPrice.toFixed(2)}</span>
             {product.is_on_sale && product.sale_price && (
-              <span className="text-sm text-muted-foreground line-through">${product.price.toFixed(2)}</span>
+              <span className="text-sm text-muted-foreground line-through">${Number(product.price).toFixed(2)}</span>
             )}
           </div>
           <button
