@@ -1,31 +1,12 @@
 import Layout from '@/components/Layout';
 import ProductCard from '@/components/ProductCard';
-import { mockProducts } from '@/data/mockProducts';
+import { useProducts } from '@/hooks/useProducts';
 import { useSearchParams } from 'react-router-dom';
-import { useMemo } from 'react';
-
-function fuzzyMatch(text: string, query: string): boolean {
-  const t = text.toLowerCase();
-  const q = query.toLowerCase();
-  if (t.includes(q)) return true;
-  // Simple fuzzy: check if all chars of query appear in order
-  let qi = 0;
-  for (let i = 0; i < t.length && qi < q.length; i++) {
-    if (t[i] === q[qi]) qi++;
-  }
-  return qi === q.length;
-}
 
 const SearchPage = () => {
   const [params] = useSearchParams();
   const query = params.get('q') || '';
-
-  const results = useMemo(() => {
-    if (!query.trim()) return [];
-    return mockProducts.filter(p =>
-      fuzzyMatch(p.name, query) || fuzzyMatch(p.description, query) || fuzzyMatch(p.category, query)
-    );
-  }, [query]);
+  const { data: results = [] } = useProducts({ search: query || undefined });
 
   return (
     <Layout>

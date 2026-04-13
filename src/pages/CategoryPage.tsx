@@ -1,6 +1,6 @@
 import Layout from '@/components/Layout';
 import ProductCard from '@/components/ProductCard';
-import { mockProducts } from '@/data/mockProducts';
+import { useProducts } from '@/hooks/useProducts';
 import { useParams } from 'react-router-dom';
 import { Category } from '@/types/product';
 
@@ -14,7 +14,7 @@ const CategoryPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const category = slug as Category;
   const info = categoryInfo[category];
-  const products = mockProducts.filter(p => p.category === category);
+  const { data: products = [] } = useProducts({ category });
 
   if (!info) return <Layout><div className="container py-20 text-center text-muted-foreground">Category not found.</div></Layout>;
 
