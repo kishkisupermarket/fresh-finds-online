@@ -7,7 +7,7 @@ export function useProducts(filters?: { category?: string; onSale?: boolean; inF
     queryKey: ['products', filters],
     queryFn: async () => {
       let query = supabase.from('products').select('*').order('created_at', { ascending: false });
-      if (filters?.category) query = query.eq('category', filters.category);
+      if (filters?.category) query = query.eq('category', filters.category as any);
       if (filters?.onSale) query = query.eq('is_on_sale', true);
       if (filters?.inFlyer) query = query.eq('is_in_flyer', true);
       if (filters?.popular) query = query.eq('is_popular', true);
