@@ -14,7 +14,7 @@ const Footer = () => (
             <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
               <Leaf className="w-4 h-4 text-primary-foreground" />
             </div>
-            <span className="font-display text-lg font-bold">FreshMart</span>
+            <span className="font-display text-lg font-bold">Kishki Halal Supermarket</span>
           </div>
           <p className="text-sm opacity-70">Your neighbourhood Canadian grocery store with the freshest produce and meats.</p>
           <div className="flex items-center gap-2 text-sm">
@@ -44,7 +44,7 @@ const Footer = () => (
           <h4 className="font-display font-semibold mb-4 text-sm uppercase tracking-wider opacity-60">Find Us</h4>
           <div className="rounded-lg overflow-hidden border border-background/10 aspect-video">
             <iframe
-              title="FreshMart Location"
+              title="Kishki Halal Supermarket Location"
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2895.5!2d-80.5234!3d43.4643!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x882bf3142db8b4c1%3A0x0!2s468+Albert+St%2C+Waterloo%2C+ON!5e0!3m2!1sen!2sca!4v1"
               width="100%" height="100%" style={{ border: 0 }} allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade"
             />
@@ -53,7 +53,7 @@ const Footer = () => (
       </div>
 
       <div className="mt-10 pt-6 border-t border-background/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs opacity-50">
-        <span>© {new Date().getFullYear()} FreshMart. All rights reserved.</span>
+        <span>© {new Date().getFullYear()} Kishki Halal Supermarket. All rights reserved.</span>
         <div className="flex gap-4">
           <Link to="/" className="hover:opacity-100">Home</Link>
           <Link to="/flyer" className="hover:opacity-100">Weekly Deals</Link>
