@@ -14,6 +14,69 @@ export type Database = {
   }
   public: {
     Tables: {
+      orders: {
+        Row: {
+          created_at: string
+          customer_email: string
+          customer_name: string
+          customer_phone: string
+          delivery_address: string | null
+          delivery_city: string | null
+          delivery_date: string | null
+          delivery_fee: number
+          delivery_method: Database["public"]["Enums"]["delivery_method"]
+          id: string
+          items: Json
+          notes: string | null
+          paid: boolean
+          status: Database["public"]["Enums"]["order_status"]
+          stripe_session_id: string | null
+          subtotal: number
+          total: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          customer_email: string
+          customer_name: string
+          customer_phone: string
+          delivery_address?: string | null
+          delivery_city?: string | null
+          delivery_date?: string | null
+          delivery_fee?: number
+          delivery_method: Database["public"]["Enums"]["delivery_method"]
+          id?: string
+          items: Json
+          notes?: string | null
+          paid?: boolean
+          status?: Database["public"]["Enums"]["order_status"]
+          stripe_session_id?: string | null
+          subtotal: number
+          total: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          customer_email?: string
+          customer_name?: string
+          customer_phone?: string
+          delivery_address?: string | null
+          delivery_city?: string | null
+          delivery_date?: string | null
+          delivery_fee?: number
+          delivery_method?: Database["public"]["Enums"]["delivery_method"]
+          id?: string
+          items?: Json
+          notes?: string | null
+          paid?: boolean
+          status?: Database["public"]["Enums"]["order_status"]
+          stripe_session_id?: string | null
+          subtotal?: number
+          total?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       products: {
         Row: {
           category: Database["public"]["Enums"]["product_category"]
@@ -92,6 +155,8 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "user"
+      delivery_method: "delivery" | "pickup"
+      order_status: "new" | "preparing" | "ready" | "delivered"
       product_category: "meats" | "grocery" | "vegetables"
     }
     CompositeTypes: {
@@ -221,6 +286,8 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "user"],
+      delivery_method: ["delivery", "pickup"],
+      order_status: ["new", "preparing", "ready", "delivered"],
       product_category: ["meats", "grocery", "vegetables"],
     },
   },
