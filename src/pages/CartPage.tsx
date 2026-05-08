@@ -79,9 +79,9 @@ const CartPage = () => {
             <span className="font-display font-bold text-lg text-foreground">Total</span>
             <span className="font-display font-bold text-xl text-primary">${(totalPrice * 1.13).toFixed(2)}</span>
           </div>
-          <button className="w-full bg-primary text-primary-foreground py-3 rounded-full font-semibold hover:bg-primary/90 transition-colors">
+          <Link to="/checkout" className="block w-full text-center bg-primary text-primary-foreground py-3 rounded-full font-semibold hover:bg-primary/90 transition-colors">
             Proceed to Checkout
-          </button>
+          </Link>
           <div className="flex justify-between mt-3">
             <Link to="/" className="text-sm text-primary hover:underline">Continue Shopping</Link>
             <button onClick={clearCart} className="text-sm text-destructive hover:underline">Clear Cart</button>
