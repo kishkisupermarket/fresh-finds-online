@@ -1,6 +1,10 @@
-import { corsHeaders } from "https://esm.sh/@supabase/supabase-js@2.95.0/cors";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.95.0";
-import Stripe from "https://esm.sh/stripe@17.7.0?target=deno";
+import { createClient } from "npm:@supabase/supabase-js@2.45.0";
+import Stripe from "npm:stripe@17.7.0";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+};
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
@@ -19,11 +23,13 @@ Deno.serve(async (req) => {
     });
 
     const session = await stripe.checkout.sessions.retrieve(session_id);
+    console.log("Retrieved session", session.id, "payment_status:", session.payment_status);
+
     if (session.payment_status !== "paid") {
-      return new Response(JSON.stringify({ error: "Payment not completed", status: session.payment_status }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      return new Response(
+        JSON.stringify({ error: "Payment not completed", status: session.payment_status }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
     }
 
     const supabase = createClient(
@@ -31,14 +37,16 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
 
-    // Idempotency: return existing order if already saved
-    const { data: existing } = await supabase
+    const { data: existing, error: selErr } = await supabase
       .from("orders")
       .select("*")
       .eq("stripe_session_id", session_id)
       .maybeSingle();
 
+    if (selErr) console.error("select error", selErr);
+
     if (existing) {
+      console.log("Order already exists", existing.id);
       return new Response(JSON.stringify({ order: existing }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -47,7 +55,7 @@ Deno.serve(async (req) => {
     const m = session.metadata || {};
     const insertRow = {
       customer_name: m.customer_name || "",
-      customer_email: session.customer_email || "",
+      customer_email: session.customer_email || m.customer_email || "",
       customer_phone: m.customer_phone || "",
       delivery_method: (m.delivery_method as "delivery" | "pickup") || "pickup",
       delivery_address: m.delivery_address || null,
@@ -68,8 +76,12 @@ Deno.serve(async (req) => {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      console.error("insert error", error);
+      throw error;
+    }
 
+    console.log("Order inserted", order.id);
     return new Response(JSON.stringify({ order }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
