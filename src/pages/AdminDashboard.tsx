@@ -15,6 +15,8 @@ import { toast } from 'sonner';
 import { LogOut, Plus, Pencil, Trash2, Upload, Package, DollarSign, Tag } from 'lucide-react';
 import type { Product, Category } from '@/types/product';
 import { Navigate } from 'react-router-dom';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import OrdersSection from '@/components/admin/OrdersSection';
 
 const categories: { value: Category; label: string }[] = [
   { value: 'meats', label: 'Meats' },
