@@ -32,12 +32,21 @@ Deno.serve(async (req) => {
       );
     }
 
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-    );
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
-    const { data: existing, error: selErr } = await supabase
+    if (!supabaseUrl || !serviceRoleKey) {
+      throw new Error("Missing Supabase service role configuration");
+    }
+
+    const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey, {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      },
+    });
+
+    const { data: existing, error: selErr } = await supabaseAdmin
       .from("orders")
       .select("*")
       .eq("stripe_session_id", session_id)
@@ -70,7 +79,7 @@ Deno.serve(async (req) => {
       stripe_session_id: session_id,
     };
 
-    const { data: order, error } = await supabase
+    const { data: order, error } = await supabaseAdmin
       .from("orders")
       .insert(insertRow)
       .select()
