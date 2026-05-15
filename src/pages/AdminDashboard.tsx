@@ -15,6 +15,8 @@ import { toast } from 'sonner';
 import { LogOut, Plus, Pencil, Trash2, Upload, Package, DollarSign, Tag } from 'lucide-react';
 import type { Product, Category } from '@/types/product';
 import { Navigate } from 'react-router-dom';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import OrdersSection from '@/components/admin/OrdersSection';
 
 const categories: { value: Category; label: string }[] = [
   { value: 'meats', label: 'Meats' },
@@ -169,6 +171,13 @@ export default function AdminDashboard() {
       </header>
 
       <div className="container py-6 space-y-6">
+        <Tabs defaultValue="products" className="space-y-6">
+          <TabsList>
+            <TabsTrigger value="products">Products</TabsTrigger>
+            <TabsTrigger value="orders">Orders</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="products" className="space-y-6">
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <Card><CardContent className="p-4 flex items-center gap-3">
@@ -273,6 +282,12 @@ export default function AdminDashboard() {
             )}
           </CardContent>
         </Card>
+          </TabsContent>
+
+          <TabsContent value="orders">
+            <OrdersSection />
+          </TabsContent>
+        </Tabs>
       </div>
 
       {/* Product Form Dialog */}
