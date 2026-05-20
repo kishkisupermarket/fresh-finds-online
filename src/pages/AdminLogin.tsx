@@ -7,13 +7,17 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Lock } from 'lucide-react';
 
+const ADMIN_EMAIL = 'kishkisupermarket@hotmail.com';
+
 export default function AdminLogin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [info, setInfo] = useState('');
   const [loading, setLoading] = useState(false);
-  const [resetting, setResetting] = useState(false);
+  const [showForgot, setShowForgot] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState(ADMIN_EMAIL);
+  const [sending, setSending] = useState(false);
   const { signIn } = useAuth();
   const navigate = useNavigate();
 
@@ -30,22 +34,18 @@ export default function AdminLogin() {
     }
   };
 
-  const handleReset = async () => {
+  const handleSendReset = async (e: React.FormEvent) => {
+    e.preventDefault();
     setError(''); setInfo('');
-    setResetting(true);
-    const targetEmail = email || 'kishkisupermarket@hotmail.com';
-    const targetPassword = 'Kishki2026';
-    const { data, error } = await supabase.functions.invoke('reset-admin', {
-      body: { email: targetEmail, password: targetPassword },
+    setSending(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(forgotEmail, {
+      redirectTo: 'https://fresh-finds-online.vercel.app/admin/reset-password',
     });
-    setResetting(false);
-    console.log('[reset-admin]', { data, error });
+    setSending(false);
     if (error) {
-      setError(`Reset failed: ${error.message}`);
+      setError(`Failed to send reset link: ${error.message}`);
     } else {
-      setInfo(`Password reset for ${targetEmail}. Try logging in with Kishki2026.`);
-      setEmail(targetEmail);
-      setPassword(targetPassword);
+      setInfo('Check your email for the reset link');
     }
   };
 
@@ -60,33 +60,51 @@ export default function AdminLogin() {
           <p className="text-sm text-muted-foreground">Kishki Halal Supermarket</p>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="text-sm font-medium text-foreground">Email</label>
-              <Input type="email" value={email} onChange={e => setEmail(e.target.value)} required placeholder="admin@kishki.ca" />
-            </div>
-            <div>
-              <label className="text-sm font-medium text-foreground">Password</label>
-              <Input type="password" value={password} onChange={e => setPassword(e.target.value)} required placeholder="••••••••" />
-            </div>
-            {error && <p className="text-sm text-destructive">{error}</p>}
-            {info && <p className="text-sm text-primary">{info}</p>}
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Signing in...' : 'Sign In'}
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              className="w-full"
-              onClick={handleReset}
-              disabled={resetting}
-            >
-              {resetting ? 'Resetting...' : 'Reset Admin Password'}
-            </Button>
-          </form>
+          {!showForgot ? (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="text-sm font-medium text-foreground">Email</label>
+                <Input type="email" value={email} onChange={e => setEmail(e.target.value)} required placeholder="admin@kishki.ca" />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-foreground">Password</label>
+                <Input type="password" value={password} onChange={e => setPassword(e.target.value)} required placeholder="••••••••" />
+              </div>
+              {error && <p className="text-sm text-destructive">{error}</p>}
+              {info && <p className="text-sm text-primary">{info}</p>}
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? 'Signing in...' : 'Sign In'}
+              </Button>
+              <button
+                type="button"
+                className="w-full text-sm text-primary hover:underline"
+                onClick={() => { setShowForgot(true); setError(''); setInfo(''); setForgotEmail(email || ADMIN_EMAIL); }}
+              >
+                Forgot Password?
+              </button>
+            </form>
+          ) : (
+            <form onSubmit={handleSendReset} className="space-y-4">
+              <div>
+                <label className="text-sm font-medium text-foreground">Email</label>
+                <Input type="email" value={forgotEmail} onChange={e => setForgotEmail(e.target.value)} required />
+              </div>
+              {error && <p className="text-sm text-destructive">{error}</p>}
+              {info && <p className="text-sm text-primary">{info}</p>}
+              <Button type="submit" className="w-full" disabled={sending}>
+                {sending ? 'Sending...' : 'Send Reset Link'}
+              </Button>
+              <button
+                type="button"
+                className="w-full text-sm text-muted-foreground hover:underline"
+                onClick={() => { setShowForgot(false); setError(''); setInfo(''); }}
+              >
+                Back to login
+              </button>
+            </form>
+          )}
         </CardContent>
       </Card>
     </div>
   );
 }
-
