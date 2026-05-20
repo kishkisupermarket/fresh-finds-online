@@ -49,8 +49,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    return { error: error as Error | null };
+    console.log('[auth] signIn attempt:', email);
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    console.log('[auth] signInWithPassword result:', { user: data?.user?.id, error });
+    if (error) {
+      console.log('[auth] DECISION: failed at signInWithPassword');
+      return { error: error as Error | null };
+    }
+    if (data.user) {
+      const { data: roleData, error: roleError } = await supabase.rpc('has_role', {
+        _user_id: data.user.id,
+        _role: 'admin',
+      });
+      console.log('[auth] has_role result:', { roleData, roleError });
+    }
+    console.log('[auth] DECISION: success (authenticated, redirecting)');
+    return { error: null };
   };
 
   const signOut = async () => {

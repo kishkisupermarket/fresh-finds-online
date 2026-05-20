@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -10,20 +11,41 @@ export default function AdminLogin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [info, setInfo] = useState('');
   const [loading, setLoading] = useState(false);
+  const [resetting, setResetting] = useState(false);
   const { signIn } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError(''); setInfo('');
     setLoading(true);
     const { error } = await signIn(email, password);
     setLoading(false);
     if (error) {
-      setError('Invalid email or password');
+      setError(`Login failed: ${error.message}`);
     } else {
       navigate('/admin');
+    }
+  };
+
+  const handleReset = async () => {
+    setError(''); setInfo('');
+    setResetting(true);
+    const targetEmail = email || 'kishkisupermarket@hotmail.com';
+    const targetPassword = 'Kishki2026';
+    const { data, error } = await supabase.functions.invoke('reset-admin', {
+      body: { email: targetEmail, password: targetPassword },
+    });
+    setResetting(false);
+    console.log('[reset-admin]', { data, error });
+    if (error) {
+      setError(`Reset failed: ${error.message}`);
+    } else {
+      setInfo(`Password reset for ${targetEmail}. Try logging in with Kishki2026.`);
+      setEmail(targetEmail);
+      setPassword(targetPassword);
     }
   };
 
@@ -48,8 +70,18 @@ export default function AdminLogin() {
               <Input type="password" value={password} onChange={e => setPassword(e.target.value)} required placeholder="••••••••" />
             </div>
             {error && <p className="text-sm text-destructive">{error}</p>}
+            {info && <p className="text-sm text-primary">{info}</p>}
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? 'Signing in...' : 'Sign In'}
+            </Button>
+            <Button
+              type="button"
+              variant="outline"
+              className="w-full"
+              onClick={handleReset}
+              disabled={resetting}
+            >
+              {resetting ? 'Resetting...' : 'Reset Admin Password'}
             </Button>
           </form>
         </CardContent>
@@ -57,3 +89,4 @@ export default function AdminLogin() {
     </div>
   );
 }
+
