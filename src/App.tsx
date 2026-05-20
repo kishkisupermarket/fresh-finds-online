@@ -13,6 +13,7 @@ import CategoryPage from "./pages/CategoryPage";
 import FlyerPage from "./pages/FlyerPage";
 import SearchPage from "./pages/SearchPage";
 import AdminLogin from "./pages/AdminLogin";
+import AdminResetPassword from "./pages/AdminResetPassword";
 import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 
@@ -35,6 +36,7 @@ const App = () => (
               <Route path="/flyer" element={<FlyerPage />} />
               <Route path="/search" element={<SearchPage />} />
               <Route path="/admin/login" element={<AdminLogin />} />
+              <Route path="/admin/reset-password" element={<AdminResetPassword />} />
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
