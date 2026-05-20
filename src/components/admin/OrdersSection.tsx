@@ -39,7 +39,7 @@ export default function OrdersSection() {
     if (nextStatus === currentStatus) return;
     const { error } = await supabase
       .from('orders')
-      .update({ status: nextStatus })
+      .update({ status: nextStatus as 'pending' | 'preparing' | 'ready' | 'delivered' | 'new' })
       .eq('id', id);
     if (error) {
       toast.error('Failed to update status');
