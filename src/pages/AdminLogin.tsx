@@ -39,7 +39,7 @@ export default function AdminLogin() {
     setError(''); setInfo('');
     setSending(true);
     const { error } = await supabase.auth.resetPasswordForEmail(forgotEmail, {
-      redirectTo: 'https://fresh-finds-online.vercel.app/admin/reset-password',
+      redirectTo: `${window.location.origin}/admin/reset-password`,
     });
     setSending(false);
     if (error) {
