@@ -7,7 +7,7 @@ Deno.serve(async () => {
   )
 
   const { data, error } = await supabase.auth.admin.updateUserById(
-    'da6d8a6b-53ec-4db4-914e-f96faf369110',
+    '10921952-ba8d-419a-9146-b58f342ceb66',
     { password: '123456789' }
   )
 
